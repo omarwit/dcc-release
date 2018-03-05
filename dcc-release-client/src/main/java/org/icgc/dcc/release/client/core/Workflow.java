@@ -61,8 +61,6 @@ public class Workflow {
   private final SubmissionFileSystem submissionFileSystem;
   @NonNull
   private final TaskExecutor taskExecutor;
-  @NonNull
-  private final Mailer mailer;
 
   /**
    * Job dependencies.
@@ -102,21 +100,12 @@ public class Workflow {
       try {
         job.execute(jobContext);
       } catch (Exception e) {
-        log.warn("Emailing '{}' failed job summary...", jobType);
-        val summary = new JobSummary(jobType, watch);
-        mailer.sendFailedJob(summary, e);
-
         throw e;
       }
 
       log.info("{}", repeat("-", 100));
       log.info("Finished executing job '{}' in {}", jobType, watch);
       log.info("{}", repeat("-", 100));
-
-      // Notify
-      log.info("Emailing '{}' job summary...", jobType);
-      val summary = new JobSummary(jobType, watch);
-      mailer.sendJobSummary(summary);
     }
   }
 
