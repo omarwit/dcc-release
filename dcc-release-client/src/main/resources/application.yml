@@ -26,10 +26,10 @@
 # DCC
 dcc:
   submission:
-    url: http://localhost:5380/ws
-    dictionaryVersion: 0.11c
+    dictionary: /path/to/dictionary.json.gz
+    codelists: /path/to/codelists.json.gz
   id:
-    url: https://id.icgc.org
+    url: http://localhost:8443
     token:
     requestLoggingEnabled: false
 
@@ -58,12 +58,12 @@ spark:
 # Postgres
 postgres:
   user: dcc
-  password: <fill in>
+  password: dcc
   server: localhost
 
 id:
   postgres:
-    database: <fill in>
+    database: dcc_identifier
 
 fathmm:
   postgres:
@@ -79,7 +79,7 @@ document:
   exportVCF: false
   
 index:
-  esUri: "es://localhost:9300"
+  esUri: "es://127.0.0.1:9401"
   
 # Banner
 spring.main.banner-mode: log
