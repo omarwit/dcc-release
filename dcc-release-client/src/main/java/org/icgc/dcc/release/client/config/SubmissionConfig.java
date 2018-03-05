@@ -17,10 +17,10 @@
  */
 package org.icgc.dcc.release.client.config;
 
+import org.icgc.dcc.common.core.meta.FileCodeListsResolver;
+import org.icgc.dcc.common.core.meta.FileDictionaryResolver;
 import org.icgc.dcc.common.core.meta.Resolver.CodeListsResolver;
 import org.icgc.dcc.common.core.meta.Resolver.DictionaryResolver;
-import org.icgc.dcc.common.core.meta.RestfulCodeListsResolver;
-import org.icgc.dcc.common.core.meta.RestfulDictionaryResolver;
 import org.icgc.dcc.release.core.submission.SubmissionFileSchemas;
 import org.icgc.dcc.release.core.submission.SubmissionMetadataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,44 +29,33 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.base.Optional;
-
 /**
  * Submission system configuration.
  */
 @Lazy
 @Configuration
 public class SubmissionConfig {
+    @Value("${dcc.submission.dictionary}")
+    String dictionaryLocation;
+    @Value("${dcc.submission.codelists}")
+    String codelistsLocation;
 
-  @Value("${dcc.submission.url}")
-  String submissionUrl;
-  @Value("${dcc.submission.dictionaryVersion}")
-  String dictionaryVersion;
+    @Autowired
+    SubmissionMetadataService submissionMetadataService;
 
-  @Autowired
-  SubmissionMetadataService submissionMetadataService;
+    @Bean
+    public SubmissionFileSchemas submissionFileSchemas() {
+        return new SubmissionFileSchemas(submissionMetadataService.getMetadata());
+    }
 
-  @Bean
-  public SubmissionFileSchemas submissionFileSchemas() {
-    return new SubmissionFileSchemas(submissionMetadataService.getMetadata());
-  }
+    @Bean
+    public DictionaryResolver dictionaryResolver() {
+        return new FileDictionaryResolver(dictionaryLocation);
+    }
 
-  @Bean
-  public DictionaryResolver dictionaryResolver() {
-    return new RestfulDictionaryResolver(submissionUrl) {
-
-      @Override
-      public ObjectNode get() {
-        return super.apply(Optional.of(dictionaryVersion));
-      }
-
-    };
-  }
-
-  @Bean
-  public CodeListsResolver codeListsResolver() {
-    return new RestfulCodeListsResolver(submissionUrl);
-  }
+    @Bean
+    public CodeListsResolver codeListsResolver() {
+        return new FileCodeListsResolver(codelistsLocation);
+    }
 
 }
