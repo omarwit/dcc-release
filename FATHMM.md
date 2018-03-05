@@ -21,6 +21,7 @@ Data Import
 Import the [dataset](https://artifacts.oicr.on.ca/artifactory/dcc-binaries/fathmm-db/2.3/fathmm.v2.3.postgres.tar.gz) into Postgresql database
 - Extract the database dump files from the gz archive
 - Copy the appropriate dump files to the database server
+- Run [fix_fathmm_import](fix_fathmm_import) to correct table names in database dump file
 - Run `psql fathmm < fathmm.v2.3.postgres.sql`, the dump file will be around 20GB uncompressed, expect the import to take 3-4 hours.
 - The SQL dump may have a few issues, we need to manually patch some of the tables and sequences before we can use FATHMM, see Patch section below.
 
