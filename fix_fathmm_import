@@ -1,0 +1,7 @@
+#!/bin/bash
+
+FATHMM_SQL_SCRIPT=$1
+
+sed -i 's/DOMAINS;/"DOMAINS";/g' ${FATHMM_SQL_SCRIPT}
+sed -i 's/PROTEIN;/"PROTEIN";/g' ${FATHMM_SQL_SCRIPT}
+sed -i 's/SEQUENCE;/"SEQUENCE";/g' ${FATHMM_SQL_SCRIPT}
