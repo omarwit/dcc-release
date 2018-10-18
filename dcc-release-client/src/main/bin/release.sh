@@ -354,6 +354,7 @@ run() {
   java \
     -Djava.library.path=${DRIVER_LIB} \
     -Dlogging.config=$CONF_DIR/logback.xml \
+    -Djoinjob.sequential=true \
     -Xmx${DRIVER_MEM} -Xms${DRIVER_MEM} \
     -jar $JAR \
     --spring.config.location=${CONF_FILE} \
