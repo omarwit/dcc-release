@@ -3,7 +3,7 @@ steps:
   args: ['compile', 'package', 'install', '-DskipTests']
   id: mvn
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-f', 'dcc-release-client/Dockerfile', '-t', 'eu.gcr.io/$PROJECT_ID/$REPO_NAME-client:$TAG_NAME', '.']
+  args: ['build', '-f', 'dcc-release-client/Dockerfile', '-t', 'eu.gcr.io/$PROJECT_ID/$REPO_NAME-client:$SHORT_SHA', '.']
   waitFor: ['mvn']
 
 images: ['eu.gcr.io/$PROJECT_ID/$REPO_NAME-client']
