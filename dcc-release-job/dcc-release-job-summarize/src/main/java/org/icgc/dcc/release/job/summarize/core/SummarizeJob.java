@@ -92,8 +92,13 @@ public class SummarizeJob extends GenericJob {
     jobContext.execute(resolveGeneStatsTask);
     jobContext.execute(new GeneSummarizeTask(createBroadcast(resolveGeneStatsTask.getGeneDonorTypeCounts())),
         new MutationSummarizeTask());
-    jobContext.execute(new ReleaseSummarizeTask(donorSummarizeTask.getDonorsCount(), donorSummarizeTask
-        .getLiveDonorsCount()));
+
+    val donorsCount = donorSummarizeTask.getDonorsCount();
+    val liveCount = donorSummarizeTask.getLiveDonorsCount();
+
+    if (donorsCount != 0 || liveCount != 0) {
+      jobContext.execute(new ReleaseSummarizeTask(donorsCount, liveCount));
+    }
     log.info("Finished executing summary job in {}", watch);
   }
 
