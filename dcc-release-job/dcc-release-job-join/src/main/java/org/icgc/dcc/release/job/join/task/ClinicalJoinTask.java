@@ -22,7 +22,7 @@ import static org.icgc.dcc.release.core.job.FileType.DONOR_SURROGATE_KEY;
 import static org.icgc.dcc.release.core.job.FileType.EXPOSURE;
 import static org.icgc.dcc.release.core.job.FileType.FAMILY;
 import static org.icgc.dcc.release.core.job.FileType.SAMPLE_SURROGATE_KEY;
-import static org.icgc.dcc.release.core.job.FileType.SPECIMEN_SURROGATE_KEY_IMAGE;
+import static org.icgc.dcc.release.core.job.FileType.SPECIMEN_SURROGATE_KEY;
 import static org.icgc.dcc.release.core.job.FileType.SURGERY;
 import static org.icgc.dcc.release.core.job.FileType.THERAPY;
 import static org.icgc.dcc.release.core.util.Partitions.getPartitionsCount;
@@ -72,7 +72,7 @@ public class ClinicalJoinTask extends GenericTask {
   }
 
   private JavaRDD<ObjectNode> joinSpecimen(TaskContext taskContext) {
-    val specimen = readInput(taskContext, SPECIMEN_SURROGATE_KEY_IMAGE);
+    val specimen = readInput(taskContext, SPECIMEN_SURROGATE_KEY);
     val sample = readInput(taskContext, SAMPLE_SURROGATE_KEY);
     val joinedSample = joinSampleAndRawSequenceData(taskContext, sample);
 
@@ -128,12 +128,12 @@ public class ClinicalJoinTask extends GenericTask {
   }
 
   private JavaRDD<ObjectNode> joinSampleAndRawSequenceData(TaskContext taskContext, JavaRDD<ObjectNode> sample) {
-    val rawSeqData = getRawSequenceData(taskContext);
-
-    return sample
-        .mapToPair(CombineSampleFunctions::pairSampleId)
-        .leftOuterJoin(rawSeqData.groupBy(CombineSampleFunctions::extractSampleId))
-        .map(CombineSampleFunctions::combineSample);
+    // The 'groupBy' doesn't work on the rawSeqData which makes the
+    // whole construct return an empty array.
+    return sample;
+    //    .mapToPair(CombineSampleFunctions::pairSampleId)
+    //    .leftOuterJoin(rawSeqData.groupBy(CombineSampleFunctions::extractSampleId))
+    //    .map(CombineSampleFunctions::combineSample);
   }
 
   private JavaRDD<ObjectNode> getRawSequenceData(TaskContext taskContext) {
