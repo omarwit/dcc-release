@@ -41,9 +41,9 @@ public class ImageJob extends GenericJob {
   @Override
   public void execute(@NonNull JobContext jobContext) {
     clean(jobContext);
-
-    val specimenImageUrls = getSpecimenImageUrls();
-    addSpecimenImage(jobContext, specimenImageUrls);
+    // This service is no longer available.
+    //val specimenImageUrls = getSpecimenImageUrls();
+    //addSpecimenImage(jobContext, specimenImageUrls);
   }
 
   private void clean(JobContext jobContext) {
