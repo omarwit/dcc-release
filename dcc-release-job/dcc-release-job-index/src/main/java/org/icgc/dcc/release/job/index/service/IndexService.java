@@ -43,6 +43,7 @@ import java.util.Set;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.client.IndicesAdminClient;
+import org.elasticsearch.ResourceAlreadyExistsException;
 import org.icgc.dcc.release.core.document.DocumentType;
 import org.joda.time.DateTime;
 
@@ -88,12 +89,12 @@ public class IndexService implements Closeable {
 
     if (exists) {
       if (isLoadAll(types)) {
-        log.info("Deleting index '{}'...", indexName);
-        checkState(client.prepareDelete(indexName)
-            .execute()
-            .actionGet()
-            .isAcknowledged(),
-            "Index '%s' deletion was not acknowledged", indexName);
+        // log.info("Deleting index '{}'...", indexName);
+        //   checkState(client.prepareDelete(indexName)
+        //     .execute()
+        //     .actionGet()
+        //     .isAcknowledged(),
+        //     "Index '%s' deletion was not acknowledged", indexName);
 
         // Partial load
       } else {
@@ -116,6 +117,9 @@ public class IndexService implements Closeable {
           "Index '%s' creation was not acknowledged!", indexName);
 
       initializeTypeMappings(indexName, copyOf(DocumentType.values()));
+    } catch (ResourceAlreadyExistsException e) {
+        log.info("Index already exists, unfreezing...");
+        unfreezeIndex(indexName);
     } catch (Throwable t) {
       propagate(t);
     }
