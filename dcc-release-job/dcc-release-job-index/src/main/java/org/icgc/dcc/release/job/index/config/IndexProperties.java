@@ -70,6 +70,6 @@ public class IndexProperties {
   /**
    * Whether to optimize the Elasticsearch index after indexing is completed.
    */
-  boolean forceMerge = true;
+  boolean forceMerge = false;
 
 }
