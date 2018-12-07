@@ -42,6 +42,7 @@ import org.icgc.dcc.release.job.annotate.snpeff.SnpEffPredictor;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
+import net.sf.picard.PicardException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -132,11 +133,19 @@ public class SnpEffAnnotate implements FlatMapFunction<Iterator<ObjectNode>, Obj
     }
 
     public void predict(ObjectNode row) {
-      // Determine the prediction
-      val predictions = predict(row, predictor);
-      postprocessEmptyResults(predictions);
-      for (val prediction : predictions) {
-        results.add(SecondaryObjectNodeConverter.convert(prediction, fileType));
+      try {
+        // Determine the prediction
+        val predictions = predict(row, predictor);
+        postprocessEmptyResults(predictions);
+        for (val prediction : predictions) {
+          results.add(SecondaryObjectNodeConverter.convert(prediction, fileType));
+        }
+      }
+      catch (PicardException e) {
+        // When the requested region falls outside of the reference genome's
+        // regions, we skip the entry.
+          log.info("Skipped prediction for " + row);
+        return;
       }
     }
 
